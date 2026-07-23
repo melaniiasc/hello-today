@@ -7,6 +7,7 @@ variable "region" {
 variable "bucket_name" {
   description = "Application bucket name"
   type = string
+  default = "hello-today-bucket"
 }
 
 variable "schedule_expression" {
