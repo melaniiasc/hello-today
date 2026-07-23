@@ -11,8 +11,8 @@ provider "aws" {
   region = var.region
 }
 
-resource "aws_s3_bucket" "task_1_2" {
-  bucket = "hello-today-bucket"
+resource "aws_s3_bucket" "hello-today-bucket" {
+  bucket = var.bucket_name
 }
 
 resource "aws_iam_role" "lambda_role" {
@@ -40,7 +40,7 @@ resource "aws_iam_role_policy" "lambda_policy" {
         Action = [
           "s3:PutObject"
         ]
-        Resource = "${aws_s3_bucket.task_1_2.arn}/*"
+        Resource = "${aws_s3_bucket.hello-today-bucket.arn}/*"
       },
       {
         Effect = "Allow"
