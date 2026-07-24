@@ -12,7 +12,7 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "task_1_2" {
-  bucket = "hello-today-bucket"
+  bucket = var.bucket_name
 }
 
 resource "aws_iam_role" "lambda_role" {
