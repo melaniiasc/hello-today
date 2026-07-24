@@ -3,5 +3,5 @@ output "bucket_name" {
 }
 
 output "lambda_name" {
-  value=aws_lambda_function.scheduled_lambda.function_name
+  value = aws_lambda_function.scheduled_lambda.function_name
 }

@@ -1,17 +1,17 @@
 variable "region" {
   description = "AWS region"
-  type = string
-  default = "us-east-1"
+  type        = string
+  default     = "us-east-1"
 }
 
 variable "bucket_name" {
   description = "Application bucket name"
-  type = string
-  default = "hello-today-bucket"
+  type        = string
+  default     = "hello-today-bucket"
 }
 
 variable "schedule_expression" {
   description = "EventBridge schedule"
-  type = string
-  default = "cron(0 9 * * ? *)"
+  type        = string
+  default     = "cron(0 9 * * ? *)"
 }
