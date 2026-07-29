@@ -1,16 +1,25 @@
-name: 'Terraform Plan'
+name: 'Terraform Apply'
 
 on:
-  pull_request:
+  push:
     branches:
       - main
+  workflow_run:
+    workflows:
+      - Build
+    types:
+      - completed
 
 permissions:
   contents: read
   id-token: write
 
 jobs:
-  terraform_plan:
+  build:
+    uses: ./.github/workflows/build.yaml
+
+  terraform_apply:
+    needs: build
     runs-on: ubuntu-latest
 
     defaults:
@@ -28,17 +37,14 @@ jobs:
           role-session-name: GitHubActions
           aws-region: us-east-1
 
+
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -input=false
 
-      - name: Terraform Format
-        run: terraform fmt -check
+      - name: Terraform Apply
+        run: terraform apply -input=false tfplan
 
-      - name: Terraform Validate
-        run: terraform validate
 
-      - name: Terraform Plan
-        run: terraform plan -input=false -no-color

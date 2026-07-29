@@ -1,8 +1,10 @@
 terraform {
+  required_version = ">= 1.5.0"
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = "~> 6.0"
     }
   }
 }
@@ -11,106 +13,44 @@ provider "aws" {
   region = var.region
 }
 
-resource "aws_s3_bucket" "task_1_2" {
+module "lambda" {
+  source        = "./modules/lambda"
+  schedule      = module.scheduler.schedule
+  s3_bucket     = module.s3_bucket.s3_bucket_arn
+  http_api      = module.api_gateway.http_api
+  function_name = module.lambda.lambda_name
+  dynamodb_name = module.dynamodb.table_name
+  dynamodb      = module.dynamodb.table
+  s3_bucket_name = var.bucket_name
+}
+
+module "scheduler" {
+  source           = "./modules/scheduler"
+  scheduled_lambda = module.lambda.scheduled_lambda
+}
+
+module "dynamodb" {
+  source = "./modules/dynamodb"
+}
+
+module "api_gateway" {
+  source               = "./modules/api"
+  api_name             = "my-http-api"
+  lambda               = module.lambda.reader_lambda
+  lambda_function_name = module.lambda.reader_lambda_name
+}
+
+module "s3_bucket" {
+  source = "terraform-aws-modules/s3-bucket/aws"
+  version = "5.10.0"
+
   bucket = var.bucket_name
-}
+  acl    = "private"
 
-resource "aws_iam_role" "lambda_role" {
-  name = "lambda-execution-role"
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Action = "sts:AssumeRole"
-      Principal = {
-        Service = "lambda.amazonaws.com"
-      }
-    }]
-  })
-}
+  control_object_ownership = true
+  object_ownership         = "ObjectWriter"
 
-resource "aws_iam_role_policy" "lambda_policy" {
-  role = aws_iam_role.lambda_role.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "s3:PutObject"
-        ]
-        Resource = "${aws_s3_bucket.task_1_2.arn}/*"
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "logs:CreateLogGroup",
-          "logs:CreateLogStream",
-          "logs:PutLogEvents"
-        ]
-        Resource = "*"
-      }
-    ]
-  })
-}
-
-resource "aws_lambda_function" "scheduled_lambda" {
-  function_name = "scheduled-s3-writer"
-  runtime = "python3.12"
-  handler = "app.handler.lambda_handler"
-  filename = "lambda.zip"
-  source_code_hash = filebase64sha256("lambda.zip")
-  role = aws_iam_role.lambda_role.arn
-}
-
-resource "aws_iam_role" "scheduler_role" {
-  name = "scheduler-invoke-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Action = "sts:AssumeRole"
-      Principal = {
-        Service = "scheduler.amazonaws.com"
-      }
-    }]
-  })
-}
-
-resource "aws_iam_role_policy" "scheduler_policy" {
-  role = aws_iam_role.scheduler_role.id
-
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [{
-      Effect = "Allow"
-      Action = "lambda:InvokeFunction"
-      Resource = aws_lambda_function.scheduled_lambda.arn
-    }]
-  })
-}
-
-resource "aws_scheduler_schedule" "schedule" {
-  name = "hello-today-schedule"
-  group_name = "default"
-  schedule_expression = var.schedule_expression
-
-  flexible_time_window {
-    mode = "OFF"
+  versioning = {
+    enabled = true
   }
-
-  target {
-    arn = aws_lambda_function.scheduled_lambda.arn
-    role_arn = aws_iam_role.scheduler_role.arn
-  }
-}
-
-resource "aws_lambda_permission" "allow_scheduler" {
-  statement_id = "AllowScheduler"
-  action = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.scheduled_lambda.function_name
-  principal = "scheduler.amazonaws.com"
-  source_arn = aws_scheduler_schedule.schedule.arn
 }
