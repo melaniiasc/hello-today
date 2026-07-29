@@ -8,8 +8,8 @@ TABLE_NAME = "hello-today-table"
 
 def lambda_handler(event, context):
 
-    s3 = boto3.client("s3")
-    dynamodb = boto3.resource("dynamodb")
+    s3 = boto3.client("s3", region_name="us-east-1")
+    dynamodb = boto3.resource("dynamodb", region_name="us-east-1")
     table = dynamodb.Table(TABLE_NAME)
     today = datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%d")
     key = f"hello-current-day/hello-{today}.txt"
