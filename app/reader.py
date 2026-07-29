@@ -3,12 +3,11 @@ import json
 
 
 TABLE_NAME = "hello-today-table"
-
+dynamodb = boto3.resource("dynamodb", "us-east-1")
+table = dynamodb.Table(TABLE_NAME)
 
 def lambda_handler(event, context):
 
-    dynamodb = boto3.resource("dynamodb", "us-east-1")
-    table = dynamodb.Table(TABLE_NAME)
     path_parameters = event.get("pathParameters")
 
     if path_parameters and "date" in path_parameters:
