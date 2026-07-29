@@ -43,7 +43,7 @@ jobs:
           - name: Package Lambda
             run: |
               zip ../infra/modules/lambda/reader.zip reader.py
-              zip ../infra/modules/lambda/lambda.zip lambda.py
+              zip ../infra/modules/lambda/lambda.zip handler.py
     
 
           - name: Upload artifact
