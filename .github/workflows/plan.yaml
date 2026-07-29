@@ -71,13 +71,13 @@ jobs:
         run: terraform show -json tfplan > plan.json
 
       - name: Upload Plan File
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: tfplan
           path: tfplan
 
       - name: Upload Plan JSON
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v5
         with:
           name: plan-json
           path: plan.json
