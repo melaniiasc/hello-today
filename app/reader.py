@@ -6,6 +6,7 @@ TABLE_NAME = "hello-today-table"
 dynamodb = boto3.resource("dynamodb", "us-east-1")
 table = dynamodb.Table(TABLE_NAME)
 
+
 def lambda_handler(event, context):
 
     path_parameters = event.get("pathParameters")
