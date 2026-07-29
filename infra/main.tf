@@ -14,13 +14,13 @@ provider "aws" {
 }
 
 module "lambda" {
-  source        = "./modules/lambda"
-  schedule      = module.scheduler.schedule
-  s3_bucket     = module.s3_bucket.s3_bucket_arn
-  http_api      = module.api_gateway.http_api
-  function_name = module.lambda.lambda_name
-  dynamodb_name = module.dynamodb.table_name
-  dynamodb      = module.dynamodb.table
+  source         = "./modules/lambda"
+  schedule       = module.scheduler.schedule
+  s3_bucket      = module.s3_bucket.s3_bucket_arn
+  http_api       = module.api_gateway.http_api
+  function_name  = module.lambda.lambda_name
+  dynamodb_name  = module.dynamodb.table_name
+  dynamodb       = module.dynamodb.table
   s3_bucket_name = var.bucket_name
 }
 
@@ -41,7 +41,7 @@ module "api_gateway" {
 }
 
 module "s3_bucket" {
-  source = "terraform-aws-modules/s3-bucket/aws"
+  source  = "terraform-aws-modules/s3-bucket/aws"
   version = "5.10.0"
 
   bucket = var.bucket_name
