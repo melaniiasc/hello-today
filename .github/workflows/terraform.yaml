@@ -1,8 +1,8 @@
-name: 'Terraform Plan'
+name: 'Plan + Apply Terraform'
 
 
 on:
-  pull_request:
+  push:
     branches:
       - main
 
@@ -44,14 +44,14 @@ jobs:
       - name: Download lambda artifact
         uses: actions/download-artifact@v5
         with:
-            name: lambda-package
-            path: infra/modules/lambda/lambda.zip
+          name: lambda-package
+          path: infra/modules/lambda
 
       - name: Download reader artifact
         uses: actions/download-artifact@v5
         with:
           name: reader-package
-          path: infra/modules/lambda/reader.zip
+          path: infra/modules/lambda
 
       - name: Terraform Format
         run: terraform fmt -check
@@ -85,10 +85,60 @@ jobs:
         uses: actions/upload-artifact@v5
         with:
           name: tfplan
-          path: tfplan
+          path: infra/tfplan
 
       - name: Upload Plan JSON
         uses: actions/upload-artifact@v5
         with:
           name: plan-json
-          path: plan.json
+          path: infra/plan.json
+
+  terraform_apply:
+    environment:
+      name: production
+    needs: terraform_plan
+
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: infra
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::090814039522:role/TerraformRole
+          role-session-name: GitHubActions
+          aws-region: us-east-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Download lambda artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: lambda-package
+          path: infra/modules/lambda
+
+      - name: Download reader artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: reader-package
+          path: infra/modules/lambda
+
+      - name: Download Terraform plan
+        uses: actions/download-artifact@v5
+        with:
+          name: tfplan
+          path: infra
+
+      - name: Terraform Init
+        run: terraform init -input=false
+
+      - name: Terraform Apply
+        run: terraform apply -input=false tfplan
+
