@@ -50,10 +50,10 @@ jobs:
             uses: actions/upload-artifact@v4
             with:
               name: lambda-package
-              path: ../infra/modules/lambda/reader.zip
+              path: infra/modules/lambda/reader.zip
 
           - name: Upload artifact
             uses: actions/upload-artifact@v4
             with:
               name: reader-package
-              path: ../infra/modules/lambda/lambda.zip
+              path: infra/modules/lambda/lambda.zip
