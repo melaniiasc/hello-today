@@ -3,8 +3,12 @@ import json
 
 
 TABLE_NAME = "hello-today-table"
-dynamodb = boto3.resource("dynamodb", "us-east-1")
-table = dynamodb.Table(TABLE_NAME)
+
+
+def get_table():
+    dynamodb = boto3.resource("dynamodb", region_name="us-east-1")
+
+    return dynamodb.Table(TABLE_NAME)
 
 
 def lambda_handler(event, context):
@@ -18,6 +22,8 @@ def lambda_handler(event, context):
 
 
 def get_latest_greetings(event):
+
+    table = get_table()
 
     query_params = event.get("queryStringParameters") or {}
 
@@ -33,6 +39,8 @@ def get_latest_greetings(event):
 
 
 def get_greeting_by_date(date):
+
+    table = get_table()
 
     response = table.get_item(Key={"greeting_date": date})
 
