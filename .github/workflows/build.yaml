@@ -1,9 +1,7 @@
-name: 'Terraform build'
+name: 'Terraform Build'
 
 on:
-  pull_request:
-    branches:
-      - main
+  workflow_call:
 
 jobs:
     terraform_build:
