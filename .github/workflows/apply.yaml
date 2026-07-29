@@ -32,9 +32,14 @@ jobs:
           role-session-name: GitHubActions
           aws-region: us-east-1
 
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
+
+      - name: Download Terraform plan
+        uses: actions/download-artifact@v5
+        with:
+          name: tfplan
+          path: infra
 
       - name: Terraform Init
         run: terraform init -input=false
