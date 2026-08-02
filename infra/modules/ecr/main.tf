@@ -1,23 +1,23 @@
 resource "aws_ecr_repository" "handler" {
-  name = "-${var.environment}-lambda-handler-repository"
+  name = "writer"
 }
 
 resource "aws_ecr_lifecycle_policy" "handler" {
   policy = jsonencode({
-    Version = "2012-10-17"
-
-    Statement = [
+    rules = [
       {
-        "rulePriority" : 1,
-        "description" : "Keep last 4 images",
-        "selection" : {
-          "tagStatus" : "tagged",
-          "tagPrefixList" : ["v"],
-          "countType" : "imageCountMoreThan",
-          "countNumber" : 4
-        },
-        "action" : {
-          "type" : "expire"
+        rulePriority = 1
+        description  = "Expire untagged images older than 7 days"
+
+        selection = {
+          tagStatus   = "untagged"
+          countType   = "sinceImagePushed"
+          countUnit   = "days"
+          countNumber = 7
+        }
+
+        action = {
+          type = "expire"
         }
       }
     ]
@@ -26,23 +26,23 @@ resource "aws_ecr_lifecycle_policy" "handler" {
 }
 
 resource "aws_ecr_repository" "reader" {
-  name = "-${var.environment}-lambda-reader-repository"
+  name = "reader"
 }
 
 resource "aws_ecr_lifecycle_policy" "reader" {
   policy = jsonencode({
-    Version = "2012-10-17"
-
-    Statement = [
+    rules = [
       {
         rulePriority = 1
         description  = "Expire untagged images older than 7 days"
+
         selection = {
           tagStatus   = "untagged"
           countType   = "sinceImagePushed"
           countUnit   = "days"
           countNumber = 7
         }
+
         action = {
           type = "expire"
         }
