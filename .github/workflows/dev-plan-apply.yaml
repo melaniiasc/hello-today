@@ -69,9 +69,13 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan \
-          -var-file=dev.tfvars -var-file=image.tfvars \
-          -input=false -no-color -out=tfplan
+        run: |
+          terraform plan \
+            -var-file=dev.tfvars \
+            -var-file=image.tfvars \
+            -input=false \
+            -no-color \
+            -out=tfplan
 
       - name: Save Plan Output
         run: terraform show -json dev-tfplan > plan.json
