@@ -13,16 +13,16 @@ resource "aws_iam_role_policy" "scheduler_policy" {
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
-      Effect = "Allow"
-      Action = "lambda:InvokeFunction"
+      Effect   = "Allow"
+      Action   = "lambda:InvokeFunction"
       Resource = var.scheduled_lambda
     }]
   })
 }
 
 resource "aws_scheduler_schedule" "schedule" {
-  name = "${var.environment}-hello-today-schedule"
-  group_name = "default"
+  name                = "${var.environment}-hello-today-schedule"
+  group_name          = "default"
   schedule_expression = var.schedule_expression
 
   flexible_time_window {
@@ -30,7 +30,7 @@ resource "aws_scheduler_schedule" "schedule" {
   }
 
   target {
-    arn = var.scheduled_lambda
+    arn      = var.scheduled_lambda
     role_arn = aws_iam_role.scheduler_role.arn
   }
 }

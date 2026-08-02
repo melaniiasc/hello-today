@@ -10,12 +10,21 @@ variable "bucket_name" {
 }
 
 variable "environment" {
-    description = "Deployment environment"
-    type        = string
-    default     = "dev"
+  description = "Deployment environment"
+  type        = string
+  default     = "dev"
 }
 
 variable "schedule_expression" {
   description = "EventBridge schedule expression"
+  type        = string
+}
+
+variable "writer_image_uri" {
+  description = "URI of the Docker image in ECR for the writer"
+  type        = string
+}
+variable "reader_image_uri" {
+  description = "URI of the Docker image in ECR for the reader"
   type        = string
 }

@@ -58,8 +58,8 @@ resource "aws_iam_role_policy" "lambda_policy" {
         Resource = "*"
       },
       {
-        Effect ="Allow"
-        Action =[
+        Effect = "Allow"
+        Action = [
           "ecr:BatchCheckLayerAvailability",
           "ecr:BatchGetImage",
           "ecr:GetDownloadUrlForLayer"
@@ -73,11 +73,11 @@ resource "aws_iam_role_policy" "lambda_policy" {
 
 resource "aws_lambda_function" "scheduled_lambda" {
   function_name = "${var.environment}-scheduled-s3-writer"
-  runtime = var.runtime
-  handler = var.handler
+  runtime       = var.runtime
+  handler       = var.handler
   package_type  = "Image"
-  image_uri = var.handler_image_uri
-  role = aws_iam_role.lambda_role.arn
+  image_uri     = var.handler_image_uri
+  role          = aws_iam_role.lambda_role.arn
   environment {
     variables = {
       BUCKET_NAME = var.s3_bucket_name
@@ -87,19 +87,19 @@ resource "aws_lambda_function" "scheduled_lambda" {
 }
 
 resource "aws_lambda_permission" "allow_scheduler" {
-  statement_id = "AllowScheduler"
-  action = "lambda:InvokeFunction"
+  statement_id  = "AllowScheduler"
+  action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.scheduled_lambda.function_name
-  principal = "scheduler.amazonaws.com"
-  source_arn = var.schedule
+  principal     = "scheduler.amazonaws.com"
+  source_arn    = var.schedule
 }
 
 resource "aws_lambda_permission" "allow_api_gateway" {
-  statement_id = "AllowExecutionFromAPIGateway"
-  action = "lambda:InvokeFunction"
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.scheduled_lambda.function_name
-  principal = "apigateway.amazonaws.com"
-  source_arn = var.http_api
+  principal     = "apigateway.amazonaws.com"
+  source_arn    = var.http_api
 }
 
 resource "aws_lambda_function" "reader" {
@@ -109,8 +109,8 @@ resource "aws_lambda_function" "reader" {
   handler = var.reader_handler
   timeout = 60
 
-  package_type  = "Image"
-  image_uri = var.reader_image_uri
+  package_type = "Image"
+  image_uri    = var.reader_image_uri
 
   role = aws_iam_role.reader_role.arn
 
@@ -170,8 +170,8 @@ resource "aws_iam_role_policy" "reader_policy" {
         Resource = "*"
       },
       {
-        Effect ="Allow"
-        Action =[
+        Effect = "Allow"
+        Action = [
           "ecr:BatchCheckLayerAvailability",
           "ecr:BatchGetImage",
           "ecr:GetDownloadUrlForLayer"

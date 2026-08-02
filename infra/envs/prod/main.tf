@@ -14,36 +14,36 @@ provider "aws" {
 }
 
 module "lambda" {
-  source         = "../../modules/lambda"
-  environment = var.environment
-  schedule       = module.scheduler.schedule
-  s3_bucket      = module.s3_bucket.s3_bucket_arn
-  http_api       = module.api_gateway.http_api
-  function_name  = module.lambda.lambda_name
-  dynamodb_name  = module.dynamodb.table_name
-  dynamodb       = module.dynamodb.table
-  s3_bucket_name = var.bucket_name
+  source                 = "../../modules/lambda"
+  environment            = var.environment
+  schedule               = module.scheduler.schedule
+  s3_bucket              = module.s3_bucket.s3_bucket_arn
+  http_api               = module.api_gateway.http_api
+  function_name          = module.lambda.lambda_name
+  dynamodb_name          = module.dynamodb.table_name
+  dynamodb               = module.dynamodb.table
+  s3_bucket_name         = var.bucket_name
   handler_ecr_repository = module.ecr.handler_ecr_repository
-  reader_ecr_repository = module.ecr.reader_ecr_repository
-  writer_image_uri = var.writer_image_uri
-  reader_image_uri = var.reader_image_uri
+  reader_ecr_repository  = module.ecr.reader_ecr_repository
+  writer_image_uri       = var.writer_image_uri
+  reader_image_uri       = var.reader_image_uri
 }
 
 module "scheduler" {
-  source           = "../../modules/scheduler"
-  environment = var.environment
-  scheduled_lambda = module.lambda.scheduled_lambda
+  source              = "../../modules/scheduler"
+  environment         = var.environment
+  scheduled_lambda    = module.lambda.scheduled_lambda
   schedule_expression = var.schedule_expression
 }
 
 module "dynamodb" {
-  source = "../../modules/dynamodb"
+  source      = "../../modules/dynamodb"
   environment = var.environment
 }
 
 module "api_gateway" {
   source               = "../../modules/api"
-  environment = var.environment
+  environment          = var.environment
   lambda               = module.lambda.reader_lambda
   lambda_function_name = module.lambda.reader_lambda_name
 }
@@ -64,6 +64,6 @@ module "s3_bucket" {
 }
 
 module "ecr" {
-  source = "../../modules/ecr"
+  source      = "../../modules/ecr"
   environment = var.environment
 }

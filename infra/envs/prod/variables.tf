@@ -15,15 +15,15 @@ variable "environment" {
 }
 
 variable "schedule_expression" {
-    description = "EventBridge schedule expression"
-    type        = string
+  description = "EventBridge schedule expression"
+  type        = string
 }
 
 variable "writer_image_uri" {
-    description = "URI of the Docker image in ECR for the writer"
-    type        = string
+  description = "URI of the Docker image in ECR for the writer"
+  type        = string
 }
 variable "reader_image_uri" {
-    description = "URI of the Docker image in ECR for the reader"
-    type        = string
+  description = "URI of the Docker image in ECR for the reader"
+  type        = string
 }

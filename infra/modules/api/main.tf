@@ -24,7 +24,7 @@ resource "aws_apigatewayv2_route" "get_greetings" {
 
   api_id = aws_apigatewayv2_api.http_api.id
 
-  route_key = "GET /greetings"
+  route_key          = "GET /greetings"
   authorization_type = "NONE"
 
   target = "integrations/${aws_apigatewayv2_integration.lambda.id}"
@@ -34,7 +34,7 @@ resource "aws_apigatewayv2_route" "get_greeting_by_date" {
 
   api_id = aws_apigatewayv2_api.http_api.id
 
-  route_key = "GET /greetings/{date}"
+  route_key          = "GET /greetings/{date}"
   authorization_type = "NONE"
 
   target = "integrations/${aws_apigatewayv2_integration.lambda.id}"
@@ -53,12 +53,12 @@ resource "aws_apigatewayv2_stage" "default" {
     destination_arn = aws_cloudwatch_log_group.api_logs.arn
 
     format = jsonencode({
-      requestId      = "$context.requestId"
-      ip             = "$context.identity.sourceIp"
-      requestTime    = "$context.requestTime"
-      httpMethod     = "$context.httpMethod"
-      routeKey       = "$context.routeKey"
-      status         = "$context.status"
+      requestId   = "$context.requestId"
+      ip          = "$context.identity.sourceIp"
+      requestTime = "$context.requestTime"
+      httpMethod  = "$context.httpMethod"
+      routeKey    = "$context.routeKey"
+      status      = "$context.status"
     })
   }
 

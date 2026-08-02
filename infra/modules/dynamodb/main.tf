@@ -8,7 +8,7 @@ terraform {
 }
 
 resource "aws_dynamodb_table" "greeting_history" {
-  name         = "${var.environment}-${ var.table_name}"
+  name         = "${var.environment}-${var.table_name}"
   billing_mode = "PAY_PER_REQUEST"
 
   hash_key = "greeting_date"

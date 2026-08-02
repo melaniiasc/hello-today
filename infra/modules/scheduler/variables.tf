@@ -1,11 +1,11 @@
 variable "schedule_expression" {
   description = "EventBridge schedule"
-  type = string
+  type        = string
 }
 
 variable "scheduled_lambda" {
   description = "ARN of the Lambda function to be scheduled"
-  type = string
+  type        = string
 
 }
 
