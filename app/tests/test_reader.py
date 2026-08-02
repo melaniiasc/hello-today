@@ -2,11 +2,14 @@ import boto3
 import json
 
 from moto import mock_aws
+import os
+
+os.environ["TABLE_NAME"] = "test-table"
 
 from app.reader.reader import lambda_handler
 
 
-TABLE_NAME = "hello-today-table"
+TABLE_NAME = os.environ.get("TABLE_NAME")
 
 
 @mock_aws

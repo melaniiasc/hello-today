@@ -1,11 +1,13 @@
 import boto3
+from moto import mock_aws
+import os
+os.environ["BUCKET_NAME"] = "test-bucket"
+os.environ["TABLE_NAME"] = "test-table"
 
 from app.handler.handler import lambda_handler
-from moto import mock_aws
 
-
-BUCKET_NAME = "hello-today-bucket"
-TABLE_NAME = "hello-today-table"
+BUCKET_NAME = os.environ.get("BUCKET_NAME")
+TABLE_NAME = os.environ.get("TABLE_NAME")
 
 
 @mock_aws
