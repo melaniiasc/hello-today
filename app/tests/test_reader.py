@@ -3,7 +3,7 @@ import json
 
 from moto import mock_aws
 
-from app.reader import lambda_handler
+from app.reader.reader import lambda_handler
 
 
 TABLE_NAME = "hello-today-table"

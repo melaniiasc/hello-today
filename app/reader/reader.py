@@ -1,8 +1,9 @@
 import boto3
 import json
+import os
 
 
-TABLE_NAME = "hello-today-table"
+TABLE_NAME = os.environ.get("TABLE_NAME")
 
 
 def get_table():

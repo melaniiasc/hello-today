@@ -7,8 +7,24 @@ variable "s3_bucket" {
     description = "S3 bucket arn"
     type        = string
 }
+
 variable "s3_bucket_name" {
     description = "S3 bucket name"
+    type        = string
+}
+
+variable "environment" {
+  description = "Deployment environment"
+  type        = string
+}
+
+variable "reader_image_uri" {
+    description = "URI of the Docker image in ECR for the reader"
+    type        = string
+}
+
+variable "handler_image_uri" {
+    description = "URI of the Docker image in ECR for the handler"
     type        = string
 }
 
@@ -32,6 +48,22 @@ variable "function_name" {
   type        = string
 }
 
+variable "image_uri" {
+    description = "URI of the Docker image in ECR"
+    type        = string
+    default = ""
+}
+
+variable "handler_ecr_repository" {
+    description = "ECR repository for the handler"
+    type        = string
+}
+
+variable "reader_ecr_repository" {
+  description = "ECR repository for the reader"
+  type        = string
+}
+
 variable "runtime" {
   description = "Runtime environment"
   type        = string
@@ -41,13 +73,13 @@ variable "runtime" {
 variable "handler" {
   description = "Entry point"
   type        = string
-  default = "app.handler.lambda_handler"
+  default = "handler.lambda_handler"
 }
 
 variable "reader_handler" {
   description = "Entry point for reader"
     type        = string
-    default = "reader.reader.lambda_handler"
+    default = "reader.lambda_handler"
 }
 
 variable "filename" {

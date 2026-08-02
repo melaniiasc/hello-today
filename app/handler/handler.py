@@ -1,9 +1,10 @@
 import datetime
 
 import boto3
+import os
 
-BUCKET_NAME = "hello-today-bucket"
-TABLE_NAME = "hello-today-table"
+BUCKET_NAME = os.environ.get("BUCKET_NAME")
+TABLE_NAME = os.environ.get("TABLE_NAME")
 
 
 def lambda_handler(event, context):

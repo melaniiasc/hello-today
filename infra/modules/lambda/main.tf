@@ -8,7 +8,7 @@ terraform {
 }
 
 resource "aws_iam_role" "lambda_role" {
-  name = "lambda-execution-role"
+  name = "${var.environment}-lambda-execution-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
@@ -49,17 +49,34 @@ resource "aws_iam_role_policy" "lambda_policy" {
           "logs:PutLogEvents"
         ]
         Resource = "${aws_cloudwatch_log_group.lambda.arn}:*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "kms:Decrypt"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect ="Allow"
+        Action =[
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:BatchGetImage",
+          "ecr:GetDownloadUrlForLayer"
+        ]
+        Resource = var.handler_ecr_repository
       }
     ]
   })
 }
 
+
 resource "aws_lambda_function" "scheduled_lambda" {
-  function_name = "scheduled-s3-writer"
+  function_name = "${var.environment}-scheduled-s3-writer"
   runtime = var.runtime
   handler = var.handler
-  filename = "${path.module}/lambda.zip"
-  source_code_hash = filebase64sha256("${path.module}/lambda.zip")
+  package_type  = "Image"
+  image_uri = var.handler_image_uri
   role = aws_iam_role.lambda_role.arn
   environment {
     variables = {
@@ -86,13 +103,14 @@ resource "aws_lambda_permission" "allow_api_gateway" {
 }
 
 resource "aws_lambda_function" "reader" {
-  function_name = "greetings-reader"
+  function_name = "${var.environment}-greetings-reader"
 
   runtime = var.runtime
   handler = var.reader_handler
+  timeout = 60
 
-  filename         = "${path.module}/reader.zip"
-  source_code_hash = filebase64sha256("${path.module}/reader.zip")
+  package_type  = "Image"
+  image_uri = var.reader_image_uri
 
   role = aws_iam_role.reader_role.arn
 
@@ -104,7 +122,7 @@ resource "aws_lambda_function" "reader" {
 }
 
 resource "aws_iam_role" "reader_role" {
-  name = "reader-execution-role"
+  name = "${var.environment}-reader-execution-role"
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
@@ -129,7 +147,8 @@ resource "aws_iam_role_policy" "reader_policy" {
         Effect = "Allow"
         Action = [
           "dynamodb:GetItem",
-          "dynamodb:Query"
+          "dynamodb:Query",
+          "dynamodb:Scan"
         ]
         Resource = var.dynamodb
       },
@@ -142,6 +161,22 @@ resource "aws_iam_role_policy" "reader_policy" {
           "logs:PutLogEvents"
         ]
         Resource = "${aws_cloudwatch_log_group.reader.arn}:*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "kms:Decrypt"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect ="Allow"
+        Action =[
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:BatchGetImage",
+          "ecr:GetDownloadUrlForLayer"
+        ]
+        Resource = var.reader_ecr_repository
       }
     ]
   })

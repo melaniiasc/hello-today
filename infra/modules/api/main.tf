@@ -8,7 +8,7 @@ terraform {
 }
 
 resource "aws_apigatewayv2_api" "http_api" {
-  name          = var.api_name
+  name          = "${var.environment}-my-http-api"
   protocol_type = "HTTP"
 }
 
@@ -71,6 +71,6 @@ resource "aws_apigatewayv2_stage" "default" {
 }
 
 resource "aws_cloudwatch_log_group" "api_logs" {
-  name              = "/aws/api-gateway/${aws_apigatewayv2_api.http_api.id}"
+  name              = "/aws/api-gateway/${var.environment}-${aws_apigatewayv2_api.http_api.id}"
   retention_in_days = 7
 }

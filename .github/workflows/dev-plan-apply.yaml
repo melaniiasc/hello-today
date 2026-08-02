@@ -1,8 +1,8 @@
-name: 'Plan + Apply Terraform'
+name: 'Plan + Apply Terraform dev'
 
 
 on:
-  push:
+  pull_request:
     branches:
       - main
 
@@ -20,7 +20,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: infra
+        working-directory: infra/envs/dev
 
     steps:
       - name: Checkout
@@ -40,18 +40,6 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
-
-      - name: Download lambda artifact
-        uses: actions/download-artifact@v5
-        with:
-          name: lambda-package
-          path: infra/modules/lambda
-
-      - name: Download reader artifact
-        uses: actions/download-artifact@v5
-        with:
-          name: reader-package
-          path: infra/modules/lambda
 
       - name: Terraform Format
         run: terraform fmt -check
@@ -74,18 +62,25 @@ jobs:
       - name: Terraform lint
         run: tflint --init && tflint
 
+      - name: Download image vars
+        uses: actions/download-artifact@v4
+        with:
+          name: terraform-image-vars
+
       - name: Terraform Plan
         id: plan
-        run: terraform plan -input=false -no-color -out=tfplan
+        run: terraform plan \
+          -var-file=dev.tfvars -var-file=image.tfvars \
+          -input=false -no-color -out=tfplan
 
       - name: Save Plan Output
-        run: terraform show -json tfplan > plan.json
+        run: terraform show -json dev-tfplan > plan.json
 
       - name: Upload Plan File
         uses: actions/upload-artifact@v5
         with:
           name: tfplan
-          path: infra/tfplan
+          path:  infra/envs/dev/tfplan
 
       - name: Upload Plan JSON
         uses: actions/upload-artifact@v5
@@ -94,15 +89,13 @@ jobs:
           path: infra/plan.json
 
   terraform_apply:
-    environment:
-      name: production
     needs: terraform_plan
 
     runs-on: ubuntu-latest
 
     defaults:
       run:
-        working-directory: infra
+        working-directory: infra/envs/dev
 
     steps:
       - name: Checkout
@@ -134,11 +127,11 @@ jobs:
         uses: actions/download-artifact@v5
         with:
           name: tfplan
-          path: infra
+          path: infra/envs/dev
 
       - name: Terraform Init
         run: terraform init -input=false
 
       - name: Terraform Apply
-        run: terraform apply -input=false tfplan
+        run: terraform apply -auto-approve -input=false tfplan
 

@@ -21,7 +21,7 @@ resource "aws_iam_role_policy" "scheduler_policy" {
 }
 
 resource "aws_scheduler_schedule" "schedule" {
-  name = "hello-today-schedule"
+  name = "${var.environment}-hello-today-schedule"
   group_name = "default"
   schedule_expression = var.schedule_expression
 
@@ -36,7 +36,7 @@ resource "aws_scheduler_schedule" "schedule" {
 }
 
 resource "aws_iam_role" "scheduler_role" {
-  name = "scheduler-invoke-role"
+  name = "${var.environment}-scheduler-invoke-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"

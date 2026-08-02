@@ -1,4 +1,4 @@
-name: 'Terraform Build'
+name: 'Lambda Build'
 
 on:
   workflow_call:
@@ -25,7 +25,6 @@ jobs:
             run: |
                 pip install -r requirements.txt
 
-
           - name: Lint
             run: |
                 ruff check .
@@ -37,21 +36,3 @@ jobs:
           - name: Tests
             run: |
                 pytest
-
-          - name: Package Lambda
-            run: |
-              zip ../infra/modules/lambda/reader.zip reader.py
-              zip ../infra/modules/lambda/lambda.zip handler.py
-    
-
-          - name: Upload artifact
-            uses: actions/upload-artifact@v4
-            with:
-              name: lambda-package
-              path: infra/modules/lambda/reader.zip
-
-          - name: Upload artifact
-            uses: actions/upload-artifact@v4
-            with:
-              name: reader-package
-              path: infra/modules/lambda/lambda.zip

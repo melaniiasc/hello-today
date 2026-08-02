@@ -3,3 +3,8 @@ variable "table_name" {
   type = string
   default = "hello-today-table"
 }
+
+variable "environment" {
+  description = "Deployment environment"
+  type        = string
+}

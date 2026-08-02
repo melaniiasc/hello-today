@@ -1,0 +1,58 @@
+name: 'Docker Build and Push'
+
+on:
+  workflow_call:
+
+jobs:
+  docker_build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::090814039522:role/TerraformRole
+          role-session-name: GitHubActions
+          aws-region: us-east-1
+
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and Push writer Image
+        id: build-writer
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/writer:$IMAGE_TAG app/writer
+          docker push $ECR_REGISTRY/writer:$IMAGE_TAG
+
+      - name: Build and Push reader Image
+        id: build-reader
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/reader:$IMAGE_TAG app/reader
+          docker push $ECR_REGISTRY/reader:$IMAGE_TAG
+
+      - name: Create terraform image variables
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          echo "writer_image_uri = \"$ECR_REGISTRY/writer:$IMAGE_TAG\"" \
+            > infa/envs/$ENV/image.tfvars
+          
+          echo "reader_image_uri = \"$ECR_REGISTRY/reader:$IMAGE_TAG\"" \
+            >> infa/envs/$ENV/image.tfvars
+
+      - name: Upload image vars
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-image-vars
+          path: infa/envs/$ENV/image.tfvars

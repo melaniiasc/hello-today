@@ -1,6 +1,6 @@
 import boto3
 
-from app.handler import lambda_handler
+from app.handler.handler import lambda_handler
 from moto import mock_aws
 
 

@@ -14,7 +14,8 @@ provider "aws" {
 }
 
 module "lambda" {
-  source         = "./modules/lambda"
+  source         = "../../modules/lambda"
+  environment = var.environment
   schedule       = module.scheduler.schedule
   s3_bucket      = module.s3_bucket.s3_bucket_arn
   http_api       = module.api_gateway.http_api
@@ -22,20 +23,25 @@ module "lambda" {
   dynamodb_name  = module.dynamodb.table_name
   dynamodb       = module.dynamodb.table
   s3_bucket_name = var.bucket_name
+
 }
 
 module "scheduler" {
-  source           = "./modules/scheduler"
+  source           = "../../modules/scheduler"
+  environment = var.environment
   scheduled_lambda = module.lambda.scheduled_lambda
+  schedule_expression = var.schedule_expression
 }
 
 module "dynamodb" {
-  source = "./modules/dynamodb"
+  source = "../../modules/dynamodb"
+  environment = var.environment
 }
 
 module "api_gateway" {
-  source               = "./modules/api"
+  source               = "../../modules/api"
   api_name             = "my-http-api"
+  environment = var.environment
   lambda               = module.lambda.reader_lambda
   lambda_function_name = module.lambda.reader_lambda_name
 }
