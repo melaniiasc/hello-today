@@ -32,7 +32,7 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $ECR_REGISTRY/writer:$IMAGE_TAG app/writer
+          docker build -t $ECR_REGISTRY/writer:$IMAGE_TAG app/handler
           docker push $ECR_REGISTRY/writer:$IMAGE_TAG
 
       - name: Build and Push reader Image
