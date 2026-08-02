@@ -11,11 +11,11 @@ permissions:
   id-token: write
 
 jobs:
-  build:
-    uses: ./.github/workflows/build.yaml
+  docker_build:
+    uses: ./.github/workflows/docker-build.yaml
 
   terraform_plan:
-    needs: build
+    needs: docker_build
     runs-on: ubuntu-latest
 
     defaults:
