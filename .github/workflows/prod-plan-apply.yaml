@@ -65,7 +65,7 @@ jobs:
       - name: Download image vars
         uses: actions/download-artifact@v4
         with:
-          name: terraform-image-vars
+          name: terraform-image-vars-prof
 
       - name: Terraform Plan
         id: plan
