@@ -14,18 +14,18 @@ provider "aws" {
 }
 
 module "lambda" {
-  source         = "../../modules/lambda"
-  environment    = var.environment
-  schedule       = module.scheduler.schedule
-  s3_bucket      = module.s3_bucket.s3_bucket_arn
-  http_api       = module.api_gateway.http_api
-  function_name  = module.lambda.lambda_name
-  dynamodb_name  = module.dynamodb.table_name
-  dynamodb       = module.dynamodb.table
-  s3_bucket_name = var.bucket_name
+  source                 = "../../modules/lambda"
+  environment            = var.environment
+  schedule               = module.scheduler.schedule
+  s3_bucket              = module.s3_bucket.s3_bucket_arn
+  http_api               = module.api_gateway.http_api
+  function_name          = module.lambda.lambda_name
+  dynamodb_name          = module.dynamodb.table_name
+  dynamodb               = module.dynamodb.table
+  s3_bucket_name         = var.bucket_name
   handler_ecr_repository = module.ecr.handler_ecr_repository
   reader_ecr_repository  = module.ecr.reader_ecr_repository
-  handler_image_uri       = var.writer_image_uri
+  handler_image_uri      = var.writer_image_uri
   reader_image_uri       = var.reader_image_uri
 }
 

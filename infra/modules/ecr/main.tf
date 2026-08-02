@@ -30,14 +30,14 @@ resource "aws_ecr_repository" "reader" {
 }
 
 resource "aws_ecr_lifecycle_policy" "reader" {
-  policy     = jsonencode({
+  policy = jsonencode({
     Version = "2012-10-17"
 
     Statement = [
       {
         rulePriority = 1
         description  = "Expire untagged images older than 7 days"
-        selection    = {
+        selection = {
           tagStatus   = "untagged"
           countType   = "sinceImagePushed"
           countUnit   = "days"
