@@ -65,4 +65,10 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: terraform-image-vars
-          path: infra/envs/$ENV/image.tfvars
+          path: infra/envs/dev/image.tfvars
+
+      - name: Upload image vars
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-image-vars
+          path: infra/envs/prod/image.tfvars
