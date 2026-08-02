@@ -50,13 +50,19 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
         run: |
           echo "writer_image_uri = \"$ECR_REGISTRY/writer:$IMAGE_TAG\"" \
-            > infa/envs/$ENV/image.tfvars
+            > infra/envs/dev/image.tfvars
           
           echo "reader_image_uri = \"$ECR_REGISTRY/reader:$IMAGE_TAG\"" \
-            >> infa/envs/$ENV/image.tfvars
+            >> infra/envs/dev/image.tfvars
+          
+          echo "writer_image_uri = \"$ECR_REGISTRY/writer:$IMAGE_TAG\"" \
+            > infra/envs/prod/image.tfvars
+          
+          echo "reader_image_uri = \"$ECR_REGISTRY/reader:$IMAGE_TAG\"" \
+            >> infra/envs/prod/image.tfvars
 
       - name: Upload image vars
         uses: actions/upload-artifact@v4
         with:
           name: terraform-image-vars
-          path: infa/envs/$ENV/image.tfvars
+          path: infra/envs/$ENV/image.tfvars
