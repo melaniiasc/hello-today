@@ -1,6 +1,7 @@
 import boto3
 from moto import mock_aws
 import os
+
 os.environ["BUCKET_NAME"] = "test-bucket"
 os.environ["TABLE_NAME"] = "test-table"
 
