@@ -79,7 +79,7 @@ jobs:
             -out=tfplan
 
       - name: Save Plan Output
-        run: terraform show -json dev-tfplan > plan.json
+        run: terraform show -json tfplan > plan.json
 
       - name: Upload Plan File
         uses: actions/upload-artifact@v5
