@@ -116,18 +116,6 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      - name: Download lambda artifact
-        uses: actions/download-artifact@v5
-        with:
-          name: lambda-package
-          path: infra/modules/lambda
-
-      - name: Download reader artifact
-        uses: actions/download-artifact@v5
-        with:
-          name: reader-package
-          path: infra/modules/lambda
-
       - name: Download Terraform plan
         uses: actions/download-artifact@v5
         with:
