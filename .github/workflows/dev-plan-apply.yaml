@@ -66,6 +66,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: terraform-image-vars-dev
+          path: infra/envs/dev
 
       - name: Terraform Plan
         id: plan
