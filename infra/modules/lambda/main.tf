@@ -217,13 +217,7 @@ resource "aws_lambda_function" "notifier" {
   function_name = "${var.environment}-notifier"
   package_type  = "Image"
   image_uri     = var.notifier_image_uri
-  role          = aws_iam_role.lambda_role.arn
-  environment {
-    variables = {
-      BUCKET_NAME = var.s3_bucket_name
-      TABLE_NAME  = var.dynamodb_name
-    }
-  }
+  role          = aws_iam_role.notifier_role.arn
 }
 
 resource "aws_lambda_event_source_mapping" "notifier" {
@@ -234,7 +228,7 @@ resource "aws_lambda_event_source_mapping" "notifier" {
 }
 
 resource "aws_iam_role_policy" "notifier_policy" {
-  role = aws_iam_role.lambda_role.id
+  role = aws_iam_role.notifier_role.id
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -283,5 +277,18 @@ resource "aws_iam_role_policy" "notifier_policy" {
         ]
       }
     ]
+  })
+}
+resource "aws_iam_role" "notifier_role" {
+  name = "${var.environment}-notifier-role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = "sts:AssumeRole"
+      Principal = {
+        Service = "lambda.amazonaws.com"
+      }
+    }]
   })
 }
