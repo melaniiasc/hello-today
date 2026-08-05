@@ -6,7 +6,6 @@ os.environ["BUCKET_NAME"] = "test-bucket"
 os.environ["TABLE_NAME"] = "test-table"
 os.environ["SNS_TOPIC_ARN"] = "arn:aws:sns:us-east-1:123456789012:test-topic"
 
-from app.handler.handler import lambda_handler
 
 BUCKET_NAME = os.environ.get("BUCKET_NAME")
 TABLE_NAME = os.environ.get("TABLE_NAME")
@@ -38,6 +37,8 @@ def test_lambda_handler_uploads_file_to_s3_and_writes_to_dynamodb():
     os.environ["SNS_TOPIC_ARN"] = topic_arn
 
     table.wait_until_exists()
+
+    from app.handler.handler import lambda_handler
 
     response = lambda_handler({}, {})
 
