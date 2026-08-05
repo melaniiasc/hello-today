@@ -44,6 +44,13 @@ resource "aws_iam_role_policy" "lambda_policy" {
       {
         Effect = "Allow"
         Action = [
+          "sns:Publish"
+        ]
+        Resource = var.sns_topic
+      },
+      {
+        Effect = "Allow"
+        Action = [
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:PutLogEvents"
@@ -73,8 +80,6 @@ resource "aws_iam_role_policy" "lambda_policy" {
 
 resource "aws_lambda_function" "scheduled_lambda" {
   function_name = "${var.environment}-scheduled-s3-writer"
-  runtime       = var.runtime
-  handler       = var.handler
   package_type  = "Image"
   image_uri     = var.handler_image_uri
   role          = aws_iam_role.lambda_role.arn
@@ -86,7 +91,7 @@ resource "aws_lambda_function" "scheduled_lambda" {
   }
 }
 
-resource "aws_lambda_permission" "allow_scheduler" {
+resource "aws_lambda_permission" "allow_scheduler_handler" {
   statement_id  = "AllowScheduler"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.scheduled_lambda.function_name
@@ -94,23 +99,20 @@ resource "aws_lambda_permission" "allow_scheduler" {
   source_arn    = var.schedule
 }
 
-resource "aws_lambda_permission" "allow_api_gateway" {
+
+resource "aws_lambda_permission" "allow_api_gateway_reader" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.scheduled_lambda.function_name
+  function_name = aws_lambda_function.reader.function_name
   principal     = "apigateway.amazonaws.com"
-  source_arn    = var.http_api
+  source_arn    = "${var.http_api}/*/*"
 }
 
 resource "aws_lambda_function" "reader" {
   function_name = "${var.environment}-greetings-reader"
-
-  runtime = var.runtime
-  handler = var.reader_handler
-  timeout = 60
-
-  package_type = "Image"
-  image_uri    = var.reader_image_uri
+  timeout       = 60
+  package_type  = "Image"
+  image_uri     = var.reader_image_uri
 
   role = aws_iam_role.reader_role.arn
 
@@ -194,4 +196,85 @@ resource "aws_cloudwatch_log_group" "reader" {
   name = "/aws/lambda/${aws_lambda_function.reader.function_name}"
 
   retention_in_days = 7
+}
+
+resource "aws_cloudwatch_log_group" "notifier" {
+
+  name = "/aws/lambda/${aws_lambda_function.notifier.function_name}"
+
+  retention_in_days = 7
+}
+
+
+resource "aws_lambda_function" "notifier" {
+  function_name = "${var.environment}-notifier"
+  package_type  = "Image"
+  image_uri     = var.notifier_image_uri
+  role          = aws_iam_role.lambda_role.arn
+  environment {
+    variables = {
+      BUCKET_NAME = var.s3_bucket_name
+      TABLE_NAME  = var.dynamodb_name
+    }
+  }
+}
+
+resource "aws_lambda_event_source_mapping" "notifier" {
+  event_source_arn = var.notifications
+  function_name    = aws_lambda_function.notifier.arn
+  batch_size       = 1
+  enabled          = true
+}
+
+resource "aws_iam_role_policy" "notifier_policy" {
+  role = aws_iam_role.lambda_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "dynamodb:UpdateItem",
+        ]
+        Resource = var.dynamodb
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
+        Resource = "${aws_cloudwatch_log_group.notifier.arn}:*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "kms:Decrypt"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:BatchGetImage",
+          "ecr:GetDownloadUrlForLayer"
+        ]
+        Resource = var.notifier_ecr_repository
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
+          "sqs:GetQueueAttributes"
+        ]
+        Resource = [
+          var.notifications
+        ]
+      }
+    ]
+  })
 }

@@ -17,20 +17,9 @@ resource "aws_dynamodb_table" "greeting_history" {
     name = "greeting_date"
     type = "S"
   }
-
   point_in_time_recovery {
     enabled = true
   }
-  server_side_encryption {
-    enabled     = true
-    kms_key_arn = aws_kms_key.dynamodb.arn
-  }
 }
 
-resource "aws_kms_key" "dynamodb" {
-
-  description = "DynamoDB encryption key"
-
-  enable_key_rotation = true
-}
 

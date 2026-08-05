@@ -44,6 +44,15 @@ jobs:
           docker build -t $ECR_REGISTRY/reader:$IMAGE_TAG app/reader
           docker push $ECR_REGISTRY/reader:$IMAGE_TAG
 
+      - name: Build and Push notifier Image
+        id: build-notifier
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/notifier:$IMAGE_TAG app/notifier
+          docker push $ECR_REGISTRY/notifier:$IMAGE_TAG
+
       - name: Create terraform image variables
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -60,6 +69,12 @@ jobs:
           
           echo "reader_image_uri = \"$ECR_REGISTRY/reader:$IMAGE_TAG\"" \
             >> infra/envs/prod/image.tfvars
+          
+          echo "notifier_image_uri = \"$ECR_REGISTRY/notifier:$IMAGE_TAG\"" \
+            >> infra/envs/prod/image.tfvars
+          
+          echo "notifier_image_uri = \"$ECR_REGISTRY/notifier:$IMAGE_TAG\"" \
+            >> infra/envs/dev/image.tfvars
 
       - name: Upload image vars
         uses: actions/upload-artifact@v4

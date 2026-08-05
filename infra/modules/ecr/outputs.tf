@@ -5,3 +5,7 @@ output "handler_ecr_repository" {
 output "reader_ecr_repository" {
   value = aws_ecr_repository.reader.arn
 }
+
+output "notifier_ecr_repository" {
+  value = aws_ecr_repository.notifier.arn
+}

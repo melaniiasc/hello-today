@@ -12,6 +12,7 @@ variable "bucket_name" {
 variable "environment" {
   description = "Deployment environment"
   type        = string
+  default     = "prod"
 }
 
 variable "schedule_expression" {
@@ -25,5 +26,9 @@ variable "writer_image_uri" {
 }
 variable "reader_image_uri" {
   description = "URI of the Docker image in ECR for the reader"
+  type        = string
+}
+variable "notifier_image_uri" {
+  description = "URI of the Docker image in ECR for the notifier"
   type        = string
 }

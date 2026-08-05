@@ -53,20 +53,20 @@ resource "aws_apigatewayv2_stage" "default" {
     destination_arn = aws_cloudwatch_log_group.api_logs.arn
 
     format = jsonencode({
-      requestId   = "$context.requestId"
-      ip          = "$context.identity.sourceIp"
-      requestTime = "$context.requestTime"
-      httpMethod  = "$context.httpMethod"
-      routeKey    = "$context.routeKey"
-      status      = "$context.status"
+      requestId         = "$context.requestId"
+      ip                = "$context.identity.sourceIp"
+      requestTime       = "$context.requestTime"
+      httpMethod        = "$context.httpMethod"
+      routeKey          = "$context.routeKey"
+      status            = "$context.status"
+      integrationError  = "$context.integrationErrorMessage"
+      integrationStatus = "$context.integrationStatus"
     })
   }
 
   default_route_settings {
-
     throttling_burst_limit = 50
-
-    throttling_rate_limit = 10
+    throttling_rate_limit  = 10
   }
 }
 

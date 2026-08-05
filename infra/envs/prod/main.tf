@@ -14,19 +14,37 @@ provider "aws" {
 }
 
 module "lambda" {
-  source                 = "../../modules/lambda"
-  environment            = var.environment
-  schedule               = module.scheduler.schedule
-  s3_bucket              = module.s3_bucket.s3_bucket_arn
-  http_api               = module.api_gateway.http_api
-  function_name          = module.lambda.lambda_name
-  dynamodb_name          = module.dynamodb.table_name
-  dynamodb               = module.dynamodb.table
-  s3_bucket_name         = var.bucket_name
-  handler_ecr_repository = module.ecr.handler_ecr_repository
-  reader_ecr_repository  = module.ecr.reader_ecr_repository
-  writer_image_uri       = var.writer_image_uri
-  reader_image_uri       = var.reader_image_uri
+  source                  = "../../modules/lambda"
+  environment             = var.environment
+  schedule                = module.scheduler.schedule
+  s3_bucket               = module.s3_bucket.s3_bucket_arn
+  http_api                = module.api_gateway.http_api
+  function_name           = module.lambda.lambda_name
+  dynamodb_name           = module.dynamodb.table_name
+  dynamodb                = module.dynamodb.table
+  s3_bucket_name          = var.bucket_name
+  handler_ecr_repository  = module.ecr.handler_ecr_repository
+  reader_ecr_repository   = module.ecr.reader_ecr_repository
+  notifier_ecr_repository = module.ecr.notifier_ecr_repository
+  handler_image_uri       = var.writer_image_uri
+  reader_image_uri        = var.reader_image_uri
+  notifier_image_uri      = var.notifier_image_uri
+  notifications           = module.sqs.notifications
+  sns_topic               = module.sns.sns_topic_arn
+}
+
+module "sqs" {
+  source             = "../../modules/sqs"
+  environment        = var.environment
+  writer_lambda_name = module.lambda.lambda_name
+  sns_topic          = module.sns.sns_topic_arn
+}
+
+module "sns" {
+  source        = "../../modules/sns"
+  environment   = var.environment
+  notifications = module.sqs.notifications
+  writer_role   = module.lambda.lambda_role
 }
 
 module "scheduler" {
@@ -43,6 +61,7 @@ module "dynamodb" {
 
 module "api_gateway" {
   source               = "../../modules/api"
+  api_name             = "my-http-api"
   environment          = var.environment
   lambda               = module.lambda.reader_lambda
   lambda_function_name = module.lambda.reader_lambda_name

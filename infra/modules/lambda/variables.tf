@@ -28,6 +28,11 @@ variable "handler_image_uri" {
   type        = string
 }
 
+variable "notifier_image_uri" {
+  description = "URI of the Docker image in ECR for the notifier"
+  type        = string
+}
+
 variable "http_api" {
   description = "API arn"
   type        = string
@@ -48,11 +53,11 @@ variable "function_name" {
   type        = string
 }
 
-variable "image_uri" {
-  description = "URI of the Docker image in ECR"
+variable "notifications" {
+  description = "SQS queue arn for notifications"
   type        = string
-  default     = ""
 }
+
 
 variable "handler_ecr_repository" {
   description = "ECR repository for the handler"
@@ -64,22 +69,14 @@ variable "reader_ecr_repository" {
   type        = string
 }
 
-variable "runtime" {
-  description = "Runtime environment"
+variable "notifier_ecr_repository" {
+  description = "ECR repository for the notifier"
   type        = string
-  default     = "python3.12"
 }
 
-variable "handler" {
-  description = "Entry point"
+variable "sns_topic" {
+  description = "SNS topic arn"
   type        = string
-  default     = "handler.lambda_handler"
-}
-
-variable "reader_handler" {
-  description = "Entry point for reader"
-  type        = string
-  default     = "reader.lambda_handler"
 }
 
 variable "filename" {
