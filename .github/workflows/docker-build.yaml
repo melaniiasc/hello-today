@@ -71,7 +71,7 @@ jobs:
             >> infra/envs/prod/image.tfvars
           
           echo "notifier_image_uri = \"$ECR_REGISTRY/notifier:$IMAGE_TAG\"" \
-            >> infra/envs/prod/image.tfvars
+            >>  infra/envs/prod/image.tfvars
           
           echo "notifier_image_uri = \"$ECR_REGISTRY/notifier:$IMAGE_TAG\"" \
             >> infra/envs/dev/image.tfvars
