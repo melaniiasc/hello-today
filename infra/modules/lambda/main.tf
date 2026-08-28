@@ -90,6 +90,9 @@ resource "aws_lambda_function" "scheduled_lambda" {
   package_type  = "Image"
   image_uri     = var.handler_image_uri
   role          = aws_iam_role.lambda_role.arn
+  tracing_config {
+    mode = "Active"
+  }
   environment {
     variables = {
       BUCKET_NAME = var.s3_bucket_name
@@ -122,6 +125,10 @@ resource "aws_lambda_function" "reader" {
   image_uri     = var.reader_image_uri
 
   role = aws_iam_role.reader_role.arn
+
+  tracing_config {
+    mode = "Active"
+  }
 
   environment {
     variables = {
@@ -218,6 +225,9 @@ resource "aws_lambda_function" "notifier" {
   package_type  = "Image"
   image_uri     = var.notifier_image_uri
   role          = aws_iam_role.notifier_role.arn
+  tracing_config {
+    mode = "Active"
+  }
 }
 
 resource "aws_lambda_event_source_mapping" "notifier" {
@@ -248,13 +258,6 @@ resource "aws_iam_role_policy" "notifier_policy" {
           "logs:PutLogEvents"
         ]
         Resource = "${aws_cloudwatch_log_group.notifier.arn}:*"
-      },
-      {
-        Effect = "Allow"
-        Action = [
-          "kms:Decrypt"
-        ]
-        Resource = "*"
       },
       {
         Effect = "Allow"
