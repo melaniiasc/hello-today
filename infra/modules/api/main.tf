@@ -48,7 +48,7 @@ resource "aws_apigatewayv2_stage" "default" {
   name = "$default"
 
   auto_deploy          = true
-  xray_tracing_enabled = true
+
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.api_logs.arn
 
