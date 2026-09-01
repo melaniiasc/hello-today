@@ -464,7 +464,7 @@ resource "aws_budgets_budget" "this" {
 }
 
 resource "aws_s3_bucket" "canary_artifacts" {
-  bucket = "${var.environment}-canary-artifacts"
+  bucket = "${var.environment}-canary-artifacts-bibi-bobo-baba"
 
   force_destroy = true
 }
