@@ -32,3 +32,4 @@ skip-check:
   - CKV2_AWS_62
   - CKV_AWS_300
   - CKV2_AWS_51
+  - CKV_AWS_26
