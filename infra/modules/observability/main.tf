@@ -530,6 +530,16 @@ resource "aws_iam_role_policy" "canary_s3" {
         Effect = "Allow"
 
         Action = [
+          "s3:GetObject",
+          "s3:GetObjectVersion"
+        ]
+
+        Resource = "arn:aws:s3:::aws-synthetics-library-us-east-1/*"
+      },
+      {
+        Effect = "Allow"
+
+        Action = [
           "s3:ListAllMyBuckets",
           "xray:PutTraceSegments"
         ]
