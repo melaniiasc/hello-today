@@ -575,7 +575,7 @@ resource "aws_synthetics_canary" "greetings" {
   handler = "canary.handler"
 
   schedule {
-    expression = "rate(8 hour)"
+    expression = "cron(0 */8 * * ? *)"
   }
 
   run_config {
