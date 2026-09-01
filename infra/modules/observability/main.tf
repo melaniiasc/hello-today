@@ -566,8 +566,8 @@ resource "aws_iam_role_policy" "canary_s3" {
 
 data "archive_file" "canary" {
   type        = "zip"
-  source_file = "../canary/canary.py"
-  output_path = "../canary.zip"
+  source_file = "../../../app/canary/canary.py"
+  output_path = "../../../app/canary.zip"
 }
 
 resource "aws_synthetics_canary" "greetings" {
