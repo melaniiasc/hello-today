@@ -13,4 +13,4 @@ def handler(event, context):
 
         body = json.loads(response.read().decode("utf-8"))
 
-        return {"statusCode": response.status, "body": body}
+        return {"statusCode": response.status, "body": json.dumbs(body)}
