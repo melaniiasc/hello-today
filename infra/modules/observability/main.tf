@@ -566,8 +566,8 @@ resource "aws_iam_role_policy" "canary_s3" {
 
 data "archive_file" "canary" {
   type        = "zip"
-  source_file = "../../../app/canary/canary.py"
-  output_path = "../../../app/canary.zip"
+  source_file = "${path.root}/../../../app/canary/canary.py"
+  output_path = "${path.root}/canary.zip"
 }
 
 resource "aws_synthetics_canary" "greetings" {
@@ -587,7 +587,7 @@ resource "aws_synthetics_canary" "greetings" {
     timeout_in_seconds = 60
   }
 
-  zip_file = data.archive_file.canary.output_path
+  zip_file = filebase64(data.archive_file.canary.output_path)
 
   success_retention_period = 7
   failure_retention_period = 7
