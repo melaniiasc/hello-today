@@ -13,7 +13,4 @@ def handler(event, context):
 
         body = json.loads(response.read().decode("utf-8"))
 
-        if not isinstance(body, (dict, list)):
-            raise Exception("Response body is not valid JSON")
-
         return {"statusCode": response.status, "body": body}
