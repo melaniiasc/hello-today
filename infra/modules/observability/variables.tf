@@ -6,7 +6,7 @@ variable "alert_email" {
   description = "Email for alert"
   type        = string
   default = "melaniia.s2001@gmail.com"
-}c
+}
 
 variable "environment" {
   description = "Deployment environment"
