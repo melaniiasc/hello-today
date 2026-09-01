@@ -570,7 +570,7 @@ resource "aws_synthetics_canary" "greetings" {
   artifact_s3_location = "s3://${aws_s3_bucket.canary_artifacts.bucket}/"
   execution_role_arn   = aws_iam_role.canary.arn
 
-  runtime_version = "syn-python-selenium-5.1"
+  runtime_version = "syn-python-selenium-12.0"
 
   handler = "canary.handler"
 
