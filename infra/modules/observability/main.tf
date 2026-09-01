@@ -587,7 +587,7 @@ resource "aws_synthetics_canary" "greetings" {
     timeout_in_seconds = 60
   }
 
-  zip_file = filebase64(data.archive_file.canary.output_path)
+  zip_file = data.archive_file.canary.output_path
 
   success_retention_period = 7
   failure_retention_period = 7
