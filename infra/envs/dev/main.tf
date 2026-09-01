@@ -86,3 +86,16 @@ module "ecr" {
   source      = "../../modules/ecr"
   environment = var.environment
 }
+
+module "observability" {
+  source = "../../modules/observability"
+  environment = var.environment
+  dlq_name = module.sqs.dlq_name
+  dynamodb_table_name = module.dynamodb.table_name
+  gateway_name = module.api_gateway.http_api
+  notifier_lambda_name = module.lambda.reader_lambda_name
+  queue_name = module.sqs.queue_name
+  reader_lambda_name = module.lambda.reader_lambda_name
+  region = var.region
+  writer_lambda_name = module.lambda.lambda_name
+}

@@ -97,6 +97,7 @@ resource "aws_lambda_function" "scheduled_lambda" {
     variables = {
       BUCKET_NAME = var.s3_bucket_name
       TABLE_NAME  = var.dynamodb_name
+      SNS_TOPIC_ARN  = var.sns_topic
     }
   }
 }

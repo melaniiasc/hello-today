@@ -13,9 +13,7 @@ def handler(event, context):
         logger.append_keys(correlation_id=correlation_id)
         logger.info("Notifier Lambda started")
 
-        body = json.loads(record["body"])
-
-        sns_message = json.loads(body["Message"])
+        sns_message = json.loads(record["body"])
 
         logger.info(
             "Notification processed",
